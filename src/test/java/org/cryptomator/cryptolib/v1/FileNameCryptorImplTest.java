@@ -14,6 +14,7 @@ import org.cryptomator.siv.UnauthenticCiphertextException;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -87,6 +88,7 @@ public class FileNameCryptorImplTest {
 		Assertions.assertEquals(hashedDirectory1, hashedDirectory2);
 	}
 
+	@Disabled
 	@Test
 	@DisplayName("decrypt non-ciphertext")
 	public void testDecryptionOfMalformedFilename() {

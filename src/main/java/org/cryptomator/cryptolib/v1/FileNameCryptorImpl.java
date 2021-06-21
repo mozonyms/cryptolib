@@ -9,6 +9,8 @@
 package org.cryptomator.cryptolib.v1;
 
 import java.nio.charset.Charset;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
@@ -31,6 +33,7 @@ class FileNameCryptorImpl implements FileNameCryptor {
 			return new SivMode();
 		};
 	};
+	private static final Pattern BASE64_PATTERN = Pattern.compile("([a-zA-Z0-9-_]{4})*[a-zA-Z0-9-_]{20}[a-zA-Z0-9-_=]{4}");
 
 	private final SecretKey encryptionKey;
 	private final SecretKey macKey;
@@ -55,7 +58,15 @@ class FileNameCryptorImpl implements FileNameCryptor {
 
 	@Override
 	public String encryptFilename(BaseEncoding encoding, String cleartextName, byte[]... associatedData) {
+		return encryptFilename(encoding, cleartextName, false, associatedData);
+	}
+
+	@Override
+	public String encryptFilename(BaseEncoding encoding, String cleartextName, Boolean noShortNameEncryption, byte[]... associatedData) {
 		byte[] cleartextBytes = cleartextName.getBytes(UTF_8);
+		if (noShortNameEncryption && cleartextBytes.length <= Constants.MAX_CLEARTEXT_NAME_LENGTH) {
+			return cleartextName;
+		}
 		byte[] encryptedBytes = AES_SIV.get().encrypt(encryptionKey, macKey, cleartextBytes, associatedData);
 		return encoding.encode(encryptedBytes);
 	}
@@ -72,6 +83,8 @@ class FileNameCryptorImpl implements FileNameCryptor {
 			byte[] cleartextBytes = AES_SIV.get().decrypt(encryptionKey, macKey, encryptedBytes, associatedData);
 			return new String(cleartextBytes, UTF_8);
 		} catch (UnauthenticCiphertextException | IllegalArgumentException | IllegalBlockSizeException e) {
+			Matcher matcher = BASE64_PATTERN.matcher(ciphertextName);
+			if (!matcher.find()) return ciphertextName;
 			throw new AuthenticationFailedException("Invalid Ciphertext.", e);
 		}
 	}

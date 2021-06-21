@@ -40,6 +40,15 @@ public interface FileNameCryptor {
 	String encryptFilename(BaseEncoding encoding, String cleartextName, byte[]... associatedData);
 
 	/**
+	 * @param encoding Encoding to use to encode the returned ciphertext
+	 * @param cleartextName original filename including cleartext file extension
+	 * @param noShortNameEncryption whether or not should short filename be left clear text
+	 * @param associatedData optional associated data, that will not get encrypted but needs to be provided during decryption
+	 * @return encrypted filename without any file extension
+	 */
+	String encryptFilename(BaseEncoding encoding, String cleartextName, Boolean noShortNameEncryption, byte[]... associatedData);
+
+	/**
 	 * @param ciphertextName Ciphertext only, with any additional strings like file extensions stripped first, encoded in BASE32
 	 * @param associatedData the same associated data used during encryption, otherwise and {@link AuthenticationFailedException} will be thrown
 	 * @return cleartext filename, probably including its cleartext file extension.

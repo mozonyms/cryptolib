@@ -22,5 +22,6 @@ final class Constants {
 	static final int PAYLOAD_SIZE = 32 * 1024;
 	static final int MAC_SIZE = 32;
 	static final int CHUNK_SIZE = NONCE_SIZE + PAYLOAD_SIZE + MAC_SIZE;
+	static final int MAX_CLEARTEXT_NAME_LENGTH = 146; // inclusive. calculations done in https://github.com/cryptomator/cryptofs/issues/60#issuecomment-523238303
 
 }
